@@ -51,75 +51,73 @@
 #define LOWER_MASK 0x7fffffffUL /* least significant r bits */
 
 static
-void _init_genrand(mt19937_random_t* rng, unsigned long s) {
-    rng->mt[0]= s & 0xffffffffUL;
-    for (rng->mti=1; rng->mti<N; rng->mti++) {
-        rng->mt[rng->mti] = 
-	    (1812433253UL * (rng->mt[rng->mti-1] ^ (rng->mt[rng->mti-1] >> 30)) + rng->mti); 
+void _init_genrand(mt19937_t* prng, unsigned long s) {
+    prng->mt[0]= s & 0xffffffffUL;
+    for (prng->mti=1; prng->mti<N; prng->mti++) {
+        prng->mt[prng->mti] = 
+	    (1812433253UL * (prng->mt[prng->mti-1] ^ (prng->mt[prng->mti-1] >> 30)) + prng->mti); 
         /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
         /* In the previous versions, MSBs of the seed affect   */
         /* only MSBs of the array mt[].                        */
         /* 2002/01/09 modified by Makoto Matsumoto             */
-        rng->mt[rng->mti] &= 0xffffffffUL;
+        prng->mt[prng->mti] &= 0xffffffffUL;
         /* for >32 bit machines */
     }
 }
 
 static
-void _init_by_array(mt19937_random_t* rng, unsigned long init_key[], int key_length) {
+void _init_by_array(mt19937_t* prng, unsigned long init_key[], int key_length) {
     int i, j, k;
-    _init_genrand(rng, 19650218UL);
+    _init_genrand(prng, 19650218UL);
     i=1; j=0;
     k = (N>key_length ? N : key_length);
     for (; k; k--) {
-        rng->mt[i] = (rng->mt[i] ^ ((rng->mt[i-1] ^ (rng->mt[i-1] >> 30)) * 1664525UL))
+        prng->mt[i] = (prng->mt[i] ^ ((prng->mt[i-1] ^ (prng->mt[i-1] >> 30)) * 1664525UL))
           + init_key[j] + j; /* non linear */
-        rng->mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
+        prng->mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
         i++; j++;
-        if (i>=N) { rng->mt[0] = rng->mt[N-1]; i=1; }
+        if (i>=N) { prng->mt[0] = prng->mt[N-1]; i=1; }
         if (j>=key_length) j=0;
     }
     for (k=N-1; k; k--) {
-        rng->mt[i] = (rng->mt[i] ^ ((rng->mt[i-1] ^ (rng->mt[i-1] >> 30)) * 1566083941UL))
+        prng->mt[i] = (prng->mt[i] ^ ((prng->mt[i-1] ^ (prng->mt[i-1] >> 30)) * 1566083941UL))
           - i; /* non linear */
-        rng->mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
+        prng->mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
         i++;
-        if (i>=N) { rng->mt[0] = rng->mt[N-1]; i=1; }
+        if (i>=N) { prng->mt[0] = prng->mt[N-1]; i=1; }
     }
 
-    rng->mt[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */ 
+    prng->mt[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */ 
 }
 
-void mt19937_seed(void* rng_v, uint64_t x, uint64_t y) {
-    mt19937_random_t* rng = rng_v;
-    unsigned long init_key[2] = { x, y };
-    _init_by_array(rng, init_key, 2);
+void mt19937_seed(mt19937_t* prng, uint64_t s1, uint64_t s2) {
+    unsigned long init_key[2] = { s1, s2 };
+    _init_by_array(prng, init_key, 2);
 }
 
-uint32_t mt19937_rand(void* rng_v) {
-    mt19937_random_t* rng = rng_v;
+uint32_t mt19937_rand(mt19937_t* prng) {
     unsigned long y;
     static unsigned long mag01[2]={0x0UL, MATRIX_A};
     /* mag01[x] = x * MATRIX_A  for x=0,1 */
 
-    if (rng->mti >= N) { /* generate N words at one time */
+    if (prng->mti >= N) { /* generate N words at one time */
         int kk;
 
         for (kk=0;kk<N-M;kk++) {
-            y = (rng->mt[kk]&UPPER_MASK)|(rng->mt[kk+1]&LOWER_MASK);
-            rng->mt[kk] = rng->mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1UL];
+            y = (prng->mt[kk]&UPPER_MASK)|(prng->mt[kk+1]&LOWER_MASK);
+            prng->mt[kk] = prng->mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1UL];
         }
         for (;kk<N-1;kk++) {
-            y = (rng->mt[kk]&UPPER_MASK)|(rng->mt[kk+1]&LOWER_MASK);
-            rng->mt[kk] = rng->mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1UL];
+            y = (prng->mt[kk]&UPPER_MASK)|(prng->mt[kk+1]&LOWER_MASK);
+            prng->mt[kk] = prng->mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1UL];
         }
-        y = (rng->mt[N-1]&UPPER_MASK)|(rng->mt[0]&LOWER_MASK);
-        rng->mt[N-1] = rng->mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1UL];
+        y = (prng->mt[N-1]&UPPER_MASK)|(prng->mt[0]&LOWER_MASK);
+        prng->mt[N-1] = prng->mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1UL];
 
-        rng->mti = 0;
+        prng->mti = 0;
     }
   
-    y = rng->mt[rng->mti++];
+    y = prng->mt[prng->mti++];
 
     /* Tempering */
     y ^= (y >> 11);
@@ -128,4 +126,14 @@ uint32_t mt19937_rand(void* rng_v) {
     y ^= (y >> 18);
 
     return (uint32_t)y;
+}
+
+static mt19937_t s_prng;
+
+void mt19937_seed_s(uint64_t s1, uint64_t s2) {
+    mt19937_seed(&s_prng, s1, s2);
+}
+
+uint32_t mt19937_rand_s() {
+    return mt19937_rand(&s_prng);
 }

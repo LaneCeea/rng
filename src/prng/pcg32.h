@@ -4,7 +4,10 @@
 typedef struct {
     uint64_t state;
     uint64_t inc;
-} pcg32_random_t;
+} pcg32_t;
 
-void pcg32_seed(void* rng_v, uint64_t x, uint64_t y);
-uint32_t pcg32_rand(void* rng_v);
+void pcg32_seed(pcg32_t* prng, uint64_t s1, uint64_t s2);
+uint32_t pcg32_rand(pcg32_t* prng);
+
+void pcg32_seed_s(uint64_t s1, uint64_t s2);
+uint32_t pcg32_rand_s();

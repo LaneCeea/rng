@@ -3,7 +3,10 @@
 
 typedef struct {
     uint32_t s[4];
-} xoshiro128plusplus_random_t;
+} xoshiro128plusplus_t;
 
-void xoshiro128plusplus_seed(void* rng_v, uint64_t x, uint64_t y);
-uint32_t xoshiro128plusplus_rand(void* rng_v);
+void xoshiro128plusplus_seed(xoshiro128plusplus_t* prng, uint64_t s1, uint64_t s2);
+uint32_t xoshiro128plusplus_rand(xoshiro128plusplus_t* prng);
+
+void xoshiro128plusplus_seed_s(uint64_t s1, uint64_t s2);
+uint32_t xoshiro128plusplus_rand_s();

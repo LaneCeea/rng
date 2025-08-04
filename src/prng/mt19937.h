@@ -6,7 +6,10 @@
 typedef struct {
     uint64_t mt[MT19937_N];
     int mti;
-} mt19937_random_t;
+} mt19937_t;
 
-void mt19937_seed(void* rng_v, uint64_t x, uint64_t y);
-uint32_t mt19937_rand(void* rng_v);
+void mt19937_seed(mt19937_t* prng, uint64_t s1, uint64_t s2);
+uint32_t mt19937_rand(mt19937_t* prng);
+
+void mt19937_seed_s(uint64_t s1, uint64_t s2);
+uint32_t mt19937_rand_s();

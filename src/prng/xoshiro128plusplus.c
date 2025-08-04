@@ -30,31 +30,39 @@ uint64_t _splitmix64(uint64_t x) {
 	return z ^ (z >> 31);
 }
 
-void xoshiro128plusplus_seed(void* rng_v, uint64_t x, uint64_t y) {
-	xoshiro128plusplus_random_t* rng = rng_v;
-    const uint64_t t1 = _splitmix64(x);
-    const uint64_t t2 = _splitmix64(y);
+void xoshiro128plusplus_seed(xoshiro128plusplus_t* prng, uint64_t s1, uint64_t s2) {
+    const uint64_t t1 = _splitmix64(s1);
+    const uint64_t t2 = _splitmix64(s2);
     
-    rng->s[0] = (uint32_t)t1;
-    rng->s[1] = (uint32_t)(t1 >> 32);
-    rng->s[2] = (uint32_t)t2;
-    rng->s[3] = (uint32_t)(t2 >> 32);
+    prng->s[0] = (uint32_t)t1;
+    prng->s[1] = (uint32_t)(t1 >> 32);
+    prng->s[2] = (uint32_t)t2;
+    prng->s[3] = (uint32_t)(t2 >> 32);
 }
 
-uint32_t xoshiro128plusplus_rand(void* rng_v) {
-	xoshiro128plusplus_random_t* rng = rng_v;
-	const uint32_t result = _rotl(rng->s[0] + rng->s[3], 7) + rng->s[0];
+uint32_t xoshiro128plusplus_rand(xoshiro128plusplus_t* prng) {
+	const uint32_t result = _rotl(prng->s[0] + prng->s[3], 7) + prng->s[0];
 
-	const uint32_t t = rng->s[1] << 9;
+	const uint32_t t = prng->s[1] << 9;
 
-	rng->s[2] ^= rng->s[0];
-	rng->s[3] ^= rng->s[1];
-	rng->s[1] ^= rng->s[2];
-	rng->s[0] ^= rng->s[3];
+	prng->s[2] ^= prng->s[0];
+	prng->s[3] ^= prng->s[1];
+	prng->s[1] ^= prng->s[2];
+	prng->s[0] ^= prng->s[3];
 
-	rng->s[2] ^= t;
+	prng->s[2] ^= t;
 
-	rng->s[3] = _rotl(rng->s[3], 11);
+	prng->s[3] = _rotl(prng->s[3], 11);
 
 	return result;
+}
+
+static xoshiro128plusplus_t s_prng;
+
+void xoshiro128plusplus_seed_s(uint64_t s1, uint64_t s2) {
+    xoshiro128plusplus_seed(&s_prng, s1, s2);
+}
+
+uint32_t xoshiro128plusplus_rand_s() {
+    return xoshiro128plusplus_rand(&s_prng);
 }

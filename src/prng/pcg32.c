@@ -23,20 +23,28 @@
 
 #include "pcg32.h"
 
-void pcg32_seed(void* rng_v, uint64_t x, uint64_t y) {
-    pcg32_random_t* rng = rng_v;
-    rng->state = 0U;
-    rng->inc = (y << 1u) | 1u;
-    pcg32_rand(rng);
-    rng->state += x;
-    pcg32_rand(rng);
+void pcg32_seed(pcg32_t* prng, uint64_t s1, uint64_t s2) {
+    prng->state = 0U;
+    prng->inc = (s2 << 1u) | 1u;
+    pcg32_rand(prng);
+    prng->state += s1;
+    pcg32_rand(prng);
 }
 
-uint32_t pcg32_rand(void* rng_v) {
-    pcg32_random_t* rng = rng_v;
-    uint64_t oldstate = rng->state;
-    rng->state = oldstate * 6364136223846793005ULL + rng->inc;
+uint32_t pcg32_rand(pcg32_t* prng) {
+    uint64_t oldstate = prng->state;
+    prng->state = oldstate * 6364136223846793005ULL + prng->inc;
     uint32_t xorshifted = ((oldstate >> 18u) ^ oldstate) >> 27u;
     uint32_t rot = oldstate >> 59u;
     return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
+}
+
+static pcg32_t s_prng;
+
+void pcg32_seed_s(uint64_t s1, uint64_t s2) {
+    pcg32_seed(&s_prng, s1, s2);
+}
+
+uint32_t pcg32_rand_s() {
+    return pcg32_rand(&s_prng);
 }
