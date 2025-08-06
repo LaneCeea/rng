@@ -1,6 +1,10 @@
 #pragma once
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     uint32_t s[4];
 } xoshiro128plusplus_t;
@@ -8,5 +12,9 @@ typedef struct {
 void xoshiro128plusplus_seed(xoshiro128plusplus_t* prng, uint64_t s1, uint64_t s2);
 uint32_t xoshiro128plusplus_rand(xoshiro128plusplus_t* prng);
 
-void xoshiro128plusplus_seed_s(uint64_t s1, uint64_t s2);
-uint32_t xoshiro128plusplus_rand_s();
+void xoshiro128plusplus_seed_g(uint64_t s1, uint64_t s2);
+uint32_t xoshiro128plusplus_rand_g();
+
+#ifdef __cplusplus
+}
+#endif

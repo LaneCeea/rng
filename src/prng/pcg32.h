@@ -1,6 +1,10 @@
 #pragma once
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     uint64_t state;
     uint64_t inc;
@@ -9,5 +13,9 @@ typedef struct {
 void pcg32_seed(pcg32_t* prng, uint64_t s1, uint64_t s2);
 uint32_t pcg32_rand(pcg32_t* prng);
 
-void pcg32_seed_s(uint64_t s1, uint64_t s2);
-uint32_t pcg32_rand_s();
+void pcg32_seed_g(uint64_t s1, uint64_t s2);
+uint32_t pcg32_rand_g();
+
+#ifdef __cplusplus
+}
+#endif

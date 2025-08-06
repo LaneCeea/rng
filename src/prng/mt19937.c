@@ -130,10 +130,10 @@ uint32_t mt19937_rand(mt19937_t* prng) {
 
 static mt19937_t s_prng;
 
-void mt19937_seed_s(uint64_t s1, uint64_t s2) {
+void mt19937_seed_g(uint64_t s1, uint64_t s2) {
     mt19937_seed(&s_prng, s1, s2);
 }
 
-uint32_t mt19937_rand_s() {
+uint32_t mt19937_rand_g() {
     return mt19937_rand(&s_prng);
 }

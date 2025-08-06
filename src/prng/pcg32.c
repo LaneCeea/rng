@@ -41,10 +41,10 @@ uint32_t pcg32_rand(pcg32_t* prng) {
 
 static pcg32_t s_prng;
 
-void pcg32_seed_s(uint64_t s1, uint64_t s2) {
+void pcg32_seed_g(uint64_t s1, uint64_t s2) {
     pcg32_seed(&s_prng, s1, s2);
 }
 
-uint32_t pcg32_rand_s() {
+uint32_t pcg32_rand_g() {
     return pcg32_rand(&s_prng);
 }
