@@ -16,6 +16,10 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
 
+############################################################
+# PRNG
+############################################################
+
 set(PRNG_SOURCES
     src/prng/mt19937.c
     src/prng/pcg32.c
@@ -28,22 +32,51 @@ set(PRNG_HEADERS
     src/prng/pcg32.h
     src/prng/standard.h
     src/prng/xoshiro128plusplus.h
-    src/prng/wrapper.hpp
+    src/prng.hpp
 )
 
 add_library(prng STATIC ${PRNG_SOURCES})
 
-# This allows using #include "prng/wrapper.hpp" etc.
+# This allows using #include "prng.hpp" etc.
 target_include_directories(prng 
     PUBLIC 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-        $<INSTALL_INTERFACE:include>
 )
 
 set_target_properties(prng PROPERTIES
     OUTPUT_NAME prng
     ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
 )
+
+############################################################
+# DIST
+############################################################
+
+set(DIST_SOURCES
+    src/dist/continuous.c
+)
+
+set(DIST_HEADERS
+    src/dist/continuous.h
+    src/dist.hpp
+)
+
+add_library(dist STATIC ${DIST_SOURCES})
+
+# This allows using #include "dist.hpp" etc.
+target_include_directories(dist 
+    PUBLIC 
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+)
+
+set_target_properties(dist PROPERTIES
+    OUTPUT_NAME dist
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+)
+
+############################################################
+# TESTS
+############################################################
 
 add_executable(prng_speed 
     tests/prng_speed.cpp
@@ -53,6 +86,17 @@ add_executable(prng_speed
 target_link_libraries(prng_speed PRIVATE prng)
 
 set_target_properties(prng_speed PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
+
+add_executable(dist_speed 
+    tests/dist_speed.cpp
+    tests/timer.hpp
+)
+
+target_link_libraries(dist_speed PRIVATE prng dist)
+
+set_target_properties(dist_speed PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
 

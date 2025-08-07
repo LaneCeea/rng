@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+#define PCG32_MIN 0
+#define PCG32_MAX UINT32_MAX
+
 typedef struct {
     uint64_t state;
     uint64_t inc;

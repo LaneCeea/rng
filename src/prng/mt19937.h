@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+#define MT19937_MIN 0
+#define MT19937_MAX UINT32_MAX
+
 #define MT19937_N 624
 
 typedef struct {

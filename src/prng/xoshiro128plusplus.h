@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+#define XOSHIRO128PLUSPLUS_MIN 0
+#define XOSHIRO128PLUSPLUS_MAX UINT32_MAX
+
 typedef struct {
     uint32_t s[4];
 } xoshiro128plusplus_t;
