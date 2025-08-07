@@ -4,6 +4,7 @@
 
 #include <concepts>
 #include <string_view>
+#include <ostream>
 #include <cstdint>
 
 template <class DistT>
@@ -44,7 +45,7 @@ public:
     void SetParam(const ParamT& Param) { m_Param = Param; }
 
 public:
-    static constexpr std::string_view Name = "Continuous_Uniform";
+    static constexpr std::string_view Name = "ContinuousUniform";
 
 private:
     ParamT m_Param;
@@ -115,3 +116,18 @@ public:
 private:
     ParamT m_Param;
 };
+
+std::ostream& operator<<(std::ostream& os, const ContinuousUniform& Dist) {
+    os << Dist.Name << '(' << Dist.GetParam().min << ", " << Dist.GetParam().max << ')';
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const Normal& Dist) {
+    os << Dist.Name << '(' << Dist.GetParam().mean << ", " << Dist.GetParam().variance << ')';
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const Exponential& Dist) {
+    os << Dist.Name << '(' << Dist.GetParam().lambda << ')';
+    return os;
+}

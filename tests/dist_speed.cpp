@@ -4,18 +4,22 @@
 
 #include <random>
 #include <cstdio>
+#include <sstream>
 
 template <PRNG PrngT, DIST DistT>
 float Test(uint64_t s1, uint64_t s2, typename DistT::ParamT Param, uint32_t iteration) {
     PrngT Prng(s1, s2);
     DistT Dist(Param);
 
+    std::ostringstream Message;
+    Message << Dist;
+
     float x = 0;
     for (uint32_t i = 0; i < iteration; ++i) {
         x = Dist(Prng);
     }
     {
-        CPUTimer Timer(std::string(Dist.Name));
+        CPUTimer Timer(Message.str());
         for (uint32_t i = 0; i < iteration; ++i) {
             x = Dist(Prng);
         }

@@ -16,6 +16,12 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
 
+configure_file(
+    "${CMAKE_SOURCE_DIR}/config.h.in"  # Input template
+    "${CMAKE_BINARY_DIR}/config.h"     # Output file
+    @ONLY  # Only substitute @VAR@ not ${VAR}
+)
+
 ############################################################
 # PRNG
 ############################################################
@@ -78,25 +84,31 @@ set_target_properties(dist PROPERTIES
 # TESTS
 ############################################################
 
-add_executable(prng_speed 
+add_executable(prng_speed
     tests/prng_speed.cpp
     tests/timer.hpp
 )
-
 target_link_libraries(prng_speed PRIVATE prng)
-
 set_target_properties(prng_speed PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
 
-add_executable(dist_speed 
+add_executable(dist_speed
     tests/dist_speed.cpp
     tests/timer.hpp
 )
-
 target_link_libraries(dist_speed PRIVATE prng dist)
-
 set_target_properties(dist_speed PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
+
+add_executable(dist_gen 
+    tests/dist_gen.cpp
+    tests/timer.hpp
+)
+target_include_directories(dist_gen PRIVATE ${CMAKE_BINARY_DIR})
+target_link_libraries(dist_gen PRIVATE prng dist)
+set_target_properties(dist_gen PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
 
