@@ -34,10 +34,12 @@ int main() {
     Test<Standard<PrngTag::Global>>(s1, s2, iteration);
     Test<Xoshiro128plusplus<PrngTag::Global>>(s1, s2, iteration);
     Test<Mt19937<PrngTag::Global>>(s1, s2, iteration);
+    Test<Chatgpt<PrngTag::Global>>(s1, s2, iteration);
     
     Test<Pcg32<PrngTag::Local>>(s1, s2, iteration);
     Test<Xoshiro128plusplus<PrngTag::Local>>(s1, s2, iteration);
     Test<Mt19937<PrngTag::Local>>(s1, s2, iteration);
+    Test<Chatgpt<PrngTag::Local>>(s1, s2, iteration);
 
     std::printf("------------------------------------------------------------\n");
 }

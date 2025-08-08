@@ -4,6 +4,7 @@
 #include <string_view>
 #include <cstdint>
 
+#include "prng/chatgpt.h"
 #include "prng/mt19937.h"
 #include "prng/pcg32.h"
 #include "prng/standard.h"
@@ -25,6 +26,9 @@ enum class PrngTag {
 };
 
 template <PrngTag T = PrngTag::Local>
+class Chatgpt;
+
+template <PrngTag T = PrngTag::Local>
 class Mt19937;
 
 template <PrngTag T = PrngTag::Local>
@@ -36,6 +40,51 @@ class Standard;
 
 template <PrngTag T = PrngTag::Local>
 class Xoshiro128plusplus;
+
+template<>
+class Chatgpt<PrngTag::Local> {
+public:
+    Chatgpt(uint32_t s1, uint32_t s2) {
+        Seed(s1, s2);
+    }
+
+    void Seed(uint32_t s1, uint32_t s2) {
+        chatgpt_seed(&m_Data, s1, s2);
+    }
+
+    uint32_t Rand() {
+        return chatgpt_rand(&m_Data);
+    }
+
+public:
+    static constexpr uint32_t Min = CHATGPT_MIN;
+    static constexpr uint32_t Max = CHATGPT_MAX;
+    static constexpr std::string_view Name = "Chatgpt_Local";
+
+private:
+    chatgpt_t m_Data;
+};
+
+template<>
+class Chatgpt<PrngTag::Global> {
+public:
+    Chatgpt(uint32_t s1, uint32_t s2) {
+        Seed(s1, s2);
+    }
+
+    void Seed(uint32_t s1, uint32_t s2) {
+        chatgpt_seed_g(s1, s2);
+    }
+
+    uint32_t Rand() {
+        return chatgpt_rand_g();
+    }
+
+public:
+    static constexpr uint32_t Min = CHATGPT_MIN;
+    static constexpr uint32_t Max = CHATGPT_MAX;
+    static constexpr std::string_view Name = "Chatgpt_Global";
+};
 
 template<>
 class Mt19937<PrngTag::Local> {

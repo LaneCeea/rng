@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#define MT19937_MIN 0
+#define MT19937_MIN 0U
 #define MT19937_MAX UINT32_MAX
 
 #define MT19937_N 624
@@ -19,7 +19,7 @@ void mt19937_seed(mt19937_t* prng, uint64_t s1, uint64_t s2);
 uint32_t mt19937_rand(mt19937_t* prng);
 
 void mt19937_seed_g(uint64_t s1, uint64_t s2);
-uint32_t mt19937_rand_g();
+uint32_t mt19937_rand_g(void);
 
 #ifdef __cplusplus
 }

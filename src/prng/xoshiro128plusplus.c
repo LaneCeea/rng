@@ -57,12 +57,12 @@ uint32_t xoshiro128plusplus_rand(xoshiro128plusplus_t* prng) {
 	return result;
 }
 
-static xoshiro128plusplus_t s_prng;
+static xoshiro128plusplus_t s_prng = { { 0U } };
 
 void xoshiro128plusplus_seed_g(uint64_t s1, uint64_t s2) {
     xoshiro128plusplus_seed(&s_prng, s1, s2);
 }
 
-uint32_t xoshiro128plusplus_rand_g() {
+uint32_t xoshiro128plusplus_rand_g(void) {
     return xoshiro128plusplus_rand(&s_prng);
 }

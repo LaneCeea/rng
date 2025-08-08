@@ -25,7 +25,7 @@
 
 void pcg32_seed(pcg32_t* prng, uint64_t s1, uint64_t s2) {
     prng->state = 0U;
-    prng->inc = (s2 << 1u) | 1u;
+    prng->inc = (s2 << 1U) | 1U;
     pcg32_rand(prng);
     prng->state += s1;
     pcg32_rand(prng);
@@ -34,17 +34,17 @@ void pcg32_seed(pcg32_t* prng, uint64_t s1, uint64_t s2) {
 uint32_t pcg32_rand(pcg32_t* prng) {
     uint64_t oldstate = prng->state;
     prng->state = oldstate * 6364136223846793005ULL + prng->inc;
-    uint32_t xorshifted = ((oldstate >> 18u) ^ oldstate) >> 27u;
-    uint32_t rot = oldstate >> 59u;
+    uint32_t xorshifted = ((oldstate >> 18U) ^ oldstate) >> 27U;
+    uint32_t rot = oldstate >> 59U;
     return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
 }
 
-static pcg32_t s_prng;
+static pcg32_t s_prng = { 0U, 0U };
 
 void pcg32_seed_g(uint64_t s1, uint64_t s2) {
     pcg32_seed(&s_prng, s1, s2);
 }
 
-uint32_t pcg32_rand_g() {
+uint32_t pcg32_rand_g(void) {
     return pcg32_rand(&s_prng);
 }

@@ -27,6 +27,7 @@ configure_file(
 ############################################################
 
 set(PRNG_SOURCES
+    src/prng/chatgpt.c
     src/prng/mt19937.c
     src/prng/pcg32.c
     src/prng/standard.c
@@ -34,6 +35,7 @@ set(PRNG_SOURCES
 )
 
 set(PRNG_HEADERS
+    src/prng/chatgpt.h
     src/prng/mt19937.h
     src/prng/pcg32.h
     src/prng/standard.h

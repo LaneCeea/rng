@@ -7,6 +7,6 @@ void standard_seed_g(uint64_t s1, uint64_t s2) {
     srand(s);
 }
 
-uint32_t standard_rand_g() {
+uint32_t standard_rand_g(void) {
     return rand();
 }
