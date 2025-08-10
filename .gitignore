@@ -5,3 +5,6 @@ build-debug
 build-release
 
 output
+
+*.aux
+*.log
